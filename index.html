@@ -132,15 +132,17 @@
         </div>
     </div>
 
-    <!-- Modal PRO (Prototipo de pago) -->
+    <!-- Modal PRO con enlace de Stripe de AppSam -->
     <div id="modal-pro" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4">
         <div class="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl text-center space-y-4">
             <span class="text-3xl">🚀</span>
             <h3 class="text-xl font-bold text-gray-800">Pasa a PresuYa PRO</h3>
             <p class="text-sm text-gray-600">Elimina la marca de agua, guarda tus plantillas y envía presupuestos ilimitados por solo 9,99 €/mes.</p>
-            <button onclick="alert('Aquí conectaremos el enlace de pago de Lemon Squeezy en el siguiente paso.')" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg text-sm shadow transition">
+            
+            <a href="https://buy.stripe.com/4gMfZh1oNfvpcFffyj2wU01" target="_blank" class="block w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg text-sm shadow transition">
                 Obtener Plan PRO
-            </button>
+            </a>
+            
             <button onclick="cerrarModalPro()" class="text-xs text-gray-400 hover:underline">Continuar con la versión gratuita</button>
         </div>
     </div>
@@ -179,7 +181,6 @@
             document.getElementById('prev-emisor').innerText = emisor;
             document.getElementById('prev-cliente').innerText = cliente;
 
-            // Recorrer líneas
             const descs = document.querySelectorAll('.desc-item');
             const precios = document.querySelectorAll('.precio-item');
             const tablaBody = document.getElementById('prev-tabla-body');
