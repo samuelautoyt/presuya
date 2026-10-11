@@ -15,9 +15,14 @@
                 <h1 class="text-2xl font-bold text-blue-600">⚡ PresuYa</h1>
                 <p class="text-sm text-gray-500">Crea y envía presupuestos profesionales en segundos</p>
             </div>
-            <button onclick="mostrarModalPro()" class="bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs px-4 py-2 rounded-full shadow-sm transition flex items-center gap-1">
-                ⭐ Pasar a PRO
-            </button>
+            <div class="flex items-center gap-3">
+                <span id="badge-contador" class="text-xs bg-blue-50 text-blue-700 font-semibold px-3 py-1 rounded-full border border-blue-200">
+                    Presupuestos restantes: 3
+                </span>
+                <button onclick="mostrarModalPro('Manual')" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold text-xs px-4 py-2 rounded-full shadow transition flex items-center gap-1">
+                    ⭐ Pasar a PRO
+                </button>
+            </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -31,8 +36,11 @@
                         <input type="text" id="emisor" placeholder="Ej. Reformas García" class="w-full mt-1 p-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500" oninput="actualizar()">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-gray-700">Logo de tu empresa</label>
-                        <input type="file" id="logo-input" accept="image/*" class="w-full mt-1 text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" onchange="cargarLogo(event)">
+                        <div class="flex justify-between items-center">
+                            <label class="block text-xs font-medium text-gray-700">Logo de tu empresa</label>
+                            <span class="text-[10px] text-amber-600 font-bold uppercase tracking-wider">Plan PRO</span>
+                        </div>
+                        <input type="file" id="logo-input" accept="image/*" class="w-full mt-1 text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 cursor-pointer" onchange="verificarLogo(event)">
                     </div>
                 </div>
 
@@ -65,10 +73,10 @@
                 </div>
 
                 <div class="pt-4 space-y-2">
-                    <button onclick="descargarPDF()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow">
+                    <button onclick="procesarAccion('pdf')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow flex justify-center items-center gap-2">
                         📄 Descargar PDF
                     </button>
-                    <button onclick="enviarWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow">
+                    <button onclick="procesarAccion('whatsapp')" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow flex justify-center items-center gap-2">
                         💬 Enviar por WhatsApp
                     </button>
                 </div>
@@ -123,7 +131,7 @@
                             <span class="font-bold text-gray-800">TOTAL:</span>
                             <span id="prev-total" class="font-bold text-xl text-blue-600">0.00 €</span>
                         </div>
-                        <div class="text-center pt-4 text-[10px] text-gray-400">
+                        <div id="marca-agua" class="text-center pt-4 text-[10px] text-gray-400">
                             Generado gratis con PresuYa
                         </div>
                     </div>
@@ -132,106 +140,24 @@
         </div>
     </div>
 
-    <!-- Modal PRO con enlace de Stripe de AppSam -->
-    <div id="modal-pro" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl text-center space-y-4">
-            <span class="text-3xl">🚀</span>
-            <h3 class="text-xl font-bold text-gray-800">Pasa a PresuYa PRO</h3>
-            <p class="text-sm text-gray-600">Elimina la marca de agua, guarda tus plantillas y envía presupuestos ilimitados por solo 9,99 €/mes.</p>
-            
-            <a href="https://buy.stripe.com/4gMfZh1oNfvpcFffyj2wU01" target="_blank" class="block w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg text-sm shadow transition">
-                Obtener Plan PRO
-            </a>
-            
-            <button onclick="cerrarModalPro()" class="text-xs text-gray-400 hover:underline">Continuar con la versión gratuita</button>
-        </div>
-    </div>
+    <!-- MODAL PRO COMPLETO (Soporte eliminado) -->
+    <div id="modal-pro" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden text-left relative">
+            <!-- Banner Superior -->
+            <div class="bg-gradient-to-r from-amber-500 to-amber-600 p-6 text-white text-center relative">
+                <button onclick="cerrarModalPro()" class="absolute top-4 right-4 text-white/80 hover:text-white text-xl font-bold">✕</button>
+                <span class="bg-white/20 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Plan Profesional</span>
+                <h3 class="text-2xl font-extrabold mt-2">Pasa a PresuYa PRO 🚀</h3>
+                <p class="text-xs text-amber-100 mt-1">Cierra más ventas proyectando una imagen 100% impecable.</p>
+            </div>
 
-    <script>
-        document.getElementById('fecha').innerText = new Date().toLocaleDateString('es-ES');
-
-        function cargarLogo(event) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                const logoImg = document.getElementById('prev-logo');
-                logoImg.src = reader.result;
-                logoImg.classList.remove('hidden');
-            }
-            if(event.target.files[0]) {
-                reader.readAsDataURL(event.target.files[0]);
-            }
-        }
-
-        function agregarLinea() {
-            const container = document.getElementById('lineas-container');
-            const nuevaLinea = document.createElement('div');
-            nuevaLinea.className = 'grid grid-cols-12 gap-2 linea-item';
-            nuevaLinea.innerHTML = `
-                <input type="text" placeholder="Descripción del trabajo/material" class="col-span-8 p-2 border rounded-lg text-sm desc-item" oninput="actualizar()">
-                <input type="number" placeholder="Precio" class="col-span-4 p-2 border rounded-lg text-sm precio-item" oninput="actualizar()">
-            `;
-            container.appendChild(nuevaLinea);
-        }
-
-        function actualizar() {
-            const emisor = document.getElementById('emisor').value || 'Tu Empresa';
-            const cliente = document.getElementById('cliente').value || 'Nombre del cliente';
-            const ivaRate = parseFloat(document.getElementById('iva-rate').value || 0);
-
-            document.getElementById('prev-emisor').innerText = emisor;
-            document.getElementById('prev-cliente').innerText = cliente;
-
-            const descs = document.querySelectorAll('.desc-item');
-            const precios = document.querySelectorAll('.precio-item');
-            const tablaBody = document.getElementById('prev-tabla-body');
-            tablaBody.innerHTML = '';
-
-            let subtotal = 0;
-
-            descs.forEach((descInput, index) => {
-                const desc = descInput.value || 'Servicio o Producto';
-                const precio = parseFloat(precios[index].value || 0);
-                subtotal += precio;
-
-                const tr = document.createElement('tr');
-                tr.className = 'border-b';
-                tr.innerHTML = `
-                    <td class="py-2 text-gray-700">${desc}</td>
-                    <td class="py-2 text-right font-medium text-gray-800">${precio.toFixed(2)} €</td>
-                `;
-                tablaBody.appendChild(tr);
-            });
-
-            const iva = subtotal * (ivaRate / 100);
-            const total = subtotal + iva;
-
-            document.getElementById('prev-subtotal').innerText = subtotal.toFixed(2) + ' €';
-            document.getElementById('label-iva').innerText = `IVA (${ivaRate}%):`;
-            document.getElementById('prev-iva').innerText = iva.toFixed(2) + ' €';
-            document.getElementById('prev-total').innerText = total.toFixed(2) + ' €';
-        }
-
-        function descargarPDF() {
-            const elemento = document.getElementById('documento');
-            html2pdf().from(elemento).save('presupuesto.pdf');
-        }
-
-        function enviarWhatsApp() {
-            const cliente = document.getElementById('cliente').value || 'cliente';
-            const total = document.getElementById('prev-total').innerText;
-            const mensaje = encodeURIComponent(`Hola ${cliente}, te adjunto la información de tu presupuesto por un total de ${total}. Quedo a tu disposición.`);
-            window.open(`https://wa.me/?text=${mensaje}`, '_blank');
-        }
-
-        function mostrarModalPro() {
-            document.getElementById('modal-pro').classList.remove('hidden');
-            document.getElementById('modal-pro').classList.add('flex');
-        }
-
-        function cerrarModalPro() {
-            document.getElementById('modal-pro').classList.add('hidden');
-            document.getElementById('modal-pro').classList.remove('flex');
-        }
-    </script>
-</body>
-</html>
+            <div class="p-6 space-y-6">
+                <!-- Beneficios -->
+                <div>
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Todo lo que obtienes con PRO:</h4>
+                    <ul class="space-y-2.5 text-xs text-gray-700">
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500 font-bold text-sm">✓</span>
+                            <span><strong>Presupuestos ilimitados:</strong> Genera y envía todos los que necesites sin bloqueos.</span>
+                        </li>
+                        <li class="flex items-center gap-
