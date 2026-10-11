@@ -8,6 +8,11 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        #modal-pro.activo {
+            display: flex !important;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 min-h-screen p-4 md:p-8 font-sans">
     <div class="max-w-6xl mx-auto">
@@ -21,7 +26,7 @@
                 <span id="badge-contador" class="text-xs bg-blue-50 text-blue-700 font-semibold px-3 py-1 rounded-full border border-blue-200">
                     Presupuestos restantes: 3
                 </span>
-                <button onclick="mostrarModalPro()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold text-xs px-4 py-2 rounded-full shadow transition flex items-center gap-1 cursor-pointer">
+                <button type="button" onclick="mostrarModalPro()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold text-xs px-4 py-2 rounded-full shadow transition cursor-pointer">
                     ⭐ Pasar a PRO
                 </button>
             </div>
@@ -55,7 +60,7 @@
                 <div class="border-t pt-4">
                     <div class="flex justify-between items-center mb-2">
                         <label class="block text-xs font-semibold text-gray-700">Conceptos / Servicios</label>
-                        <button onclick="agregarLinea()" class="text-xs text-blue-600 hover:underline font-medium">+ Añadir otra línea</button>
+                        <button type="button" onclick="agregarLinea()" class="text-xs text-blue-600 hover:underline font-medium">+ Añadir otra línea</button>
                     </div>
                     
                     <div id="lineas-container" class="space-y-2">
@@ -75,10 +80,10 @@
                 </div>
 
                 <div class="pt-4 space-y-2">
-                    <button onclick="procesarAccion('pdf')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow flex justify-center items-center gap-2">
+                    <button type="button" onclick="procesarAccion('pdf')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow flex justify-center items-center gap-2">
                         📄 Descargar PDF
                     </button>
-                    <button onclick="procesarAccion('whatsapp')" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow flex justify-center items-center gap-2">
+                    <button type="button" onclick="procesarAccion('whatsapp')" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow flex justify-center items-center gap-2">
                         💬 Enviar por WhatsApp
                     </button>
                 </div>
@@ -147,7 +152,7 @@
         <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden text-left relative">
             <!-- Banner Superior -->
             <div class="bg-gradient-to-r from-amber-500 to-amber-600 p-6 text-white text-center relative">
-                <button onclick="cerrarModalPro()" class="absolute top-4 right-4 text-white/80 hover:text-white text-xl font-bold cursor-pointer">✕</button>
+                <button type="button" onclick="cerrarModalPro()" class="absolute top-4 right-4 text-white/80 hover:text-white text-xl font-bold cursor-pointer">✕</button>
                 <span class="bg-white/20 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Plan Profesional</span>
                 <h3 class="text-2xl font-extrabold mt-2">Pasa a PresuYa PRO 🚀</h3>
                 <p class="text-xs text-amber-100 mt-1">Cierra más ventas proyectando una imagen 100% impecable.</p>
@@ -236,4 +241,112 @@
         function actualizarContadorUI() {
             const restantes = Math.max(0, MAX_GRATIS - obtenerUso());
             const badge = document.getElementById('badge-contador');
-            badge.innerText = `Presup
+            badge.innerText = `Presupuestos restantes: ${restantes}`;
+            
+            if(restantes === 0) {
+                badge.className = "text-xs bg-red-50 text-red-700 font-semibold px-3 py-1 rounded-full border border-red-200";
+            }
+        }
+
+        function verificarLogo(event) {
+            mostrarModalPro();
+            event.target.value = '';
+        }
+
+        function seleccionarPlan(tipo) {
+            planSeleccionado = tipo;
+            const cardM = document.getElementById('card-mensual');
+            const cardA = document.getElementById('card-anual');
+            const btn = document.getElementById('btn-stripe');
+
+            if (tipo === 'mensual') {
+                cardM.className = "border-2 border-amber-500 bg-amber-50/40 p-3 rounded-xl cursor-pointer transition relative";
+                cardA.className = "border-2 border-gray-200 p-3 rounded-xl cursor-pointer transition relative hover:border-amber-400";
+                btn.href = LINK_STRIPE_MENSUAL;
+            } else {
+                cardA.className = "border-2 border-amber-500 bg-amber-50/40 p-3 rounded-xl cursor-pointer transition relative";
+                cardM.className = "border-2 border-gray-200 p-3 rounded-xl cursor-pointer transition relative hover:border-amber-400";
+                btn.href = LINK_STRIPE_ANUAL;
+            }
+        }
+
+        function procesarAccion(tipo) {
+            if (obtenerUso() >= MAX_GRATIS) {
+                mostrarModalPro();
+                return;
+            }
+
+            if (tipo === 'pdf') {
+                const elemento = document.getElementById('documento');
+                html2pdf().from(elemento).save('presupuesto.pdf');
+            } else if (tipo === 'whatsapp') {
+                const cliente = document.getElementById('cliente').value || 'cliente';
+                const total = document.getElementById('prev-total').innerText;
+                const mensaje = encodeURIComponent(`Hola ${cliente}, te adjunto la información de tu presupuesto por un total de ${total}. Quedo a tu disposición.`);
+                window.open(`https://wa.me/?text=${mensaje}`, '_blank');
+            }
+
+            incrementarUso();
+        }
+
+        function agregarLinea() {
+            const container = document.getElementById('lineas-container');
+            const nuevaLinea = document.createElement('div');
+            nuevaLinea.className = 'grid grid-cols-12 gap-2 linea-item';
+            nuevaLinea.innerHTML = `
+                <input type="text" placeholder="Descripción del trabajo/material" class="col-span-8 p-2 border rounded-lg text-sm desc-item" oninput="actualizar()">
+                <input type="number" placeholder="Precio" class="col-span-4 p-2 border rounded-lg text-sm precio-item" oninput="actualizar()">
+            `;
+            container.appendChild(nuevaLinea);
+        }
+
+        function actualizar() {
+            const emisor = document.getElementById('emisor').value || 'Tu Empresa';
+            const cliente = document.getElementById('cliente').value || 'Nombre del cliente';
+            const ivaRate = parseFloat(document.getElementById('iva-rate').value || 0);
+
+            document.getElementById('prev-emisor').innerText = emisor;
+            document.getElementById('prev-cliente').innerText = cliente;
+
+            const descs = document.querySelectorAll('.desc-item');
+            const precios = document.querySelectorAll('.precio-item');
+            const tablaBody = document.getElementById('prev-tabla-body');
+            tablaBody.innerHTML = '';
+
+            let subtotal = 0;
+
+            descs.forEach((descInput, index) => {
+                const desc = descInput.value || 'Servicio o Producto';
+                const precio = parseFloat(precios[index].value || 0);
+                subtotal += precio;
+
+                const tr = document.createElement('tr');
+                tr.className = 'border-b';
+                tr.innerHTML = `
+                    <td class="py-2 text-gray-700">${desc}</td>
+                    <td class="py-2 text-right font-medium text-gray-800">${precio.toFixed(2)} €</td>
+                `;
+                tablaBody.appendChild(tr);
+            });
+
+            const iva = subtotal * (ivaRate / 100);
+            const total = subtotal + iva;
+
+            document.getElementById('prev-subtotal').innerText = subtotal.toFixed(2) + ' €';
+            document.getElementById('label-iva').innerText = `IVA (${ivaRate}%):`;
+            document.getElementById('prev-iva').innerText = iva.toFixed(2) + ' €';
+            document.getElementById('prev-total').innerText = total.toFixed(2) + ' €';
+        }
+
+        function mostrarModalPro() {
+            const modal = document.getElementById('modal-pro');
+            modal.classList.add('activo');
+        }
+
+        function cerrarModalPro() {
+            const modal = document.getElementById('modal-pro');
+            modal.classList.remove('activo');
+        }
+    </script>
+</body>
+</html>
