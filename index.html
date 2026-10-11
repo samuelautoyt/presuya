@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PresuYa - Generador de Presupuestos Profesionales</title>
+    <!-- Favicon icono de rayo para la pestaña -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
@@ -19,7 +21,7 @@
                 <span id="badge-contador" class="text-xs bg-blue-50 text-blue-700 font-semibold px-3 py-1 rounded-full border border-blue-200">
                     Presupuestos restantes: 3
                 </span>
-                <button onclick="mostrarModalPro('Manual')" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold text-xs px-4 py-2 rounded-full shadow transition flex items-center gap-1">
+                <button onclick="mostrarModalPro()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold text-xs px-4 py-2 rounded-full shadow transition flex items-center gap-1 cursor-pointer">
                     ⭐ Pasar a PRO
                 </button>
             </div>
@@ -38,7 +40,7 @@
                     <div>
                         <div class="flex justify-between items-center">
                             <label class="block text-xs font-medium text-gray-700">Logo de tu empresa</label>
-                            <span class="text-[10px] text-amber-600 font-bold uppercase tracking-wider">Plan PRO</span>
+                            <span class="text-[10px] text-amber-600 font-bold uppercase tracking-wider">PLAN PRO</span>
                         </div>
                         <input type="file" id="logo-input" accept="image/*" class="w-full mt-1 text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 cursor-pointer" onchange="verificarLogo(event)">
                     </div>
@@ -140,12 +142,12 @@
         </div>
     </div>
 
-    <!-- MODAL PRO COMPLETO (Soporte eliminado) -->
+    <!-- MODAL PRO COMPLETO -->
     <div id="modal-pro" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden text-left relative">
             <!-- Banner Superior -->
             <div class="bg-gradient-to-r from-amber-500 to-amber-600 p-6 text-white text-center relative">
-                <button onclick="cerrarModalPro()" class="absolute top-4 right-4 text-white/80 hover:text-white text-xl font-bold">✕</button>
+                <button onclick="cerrarModalPro()" class="absolute top-4 right-4 text-white/80 hover:text-white text-xl font-bold cursor-pointer">✕</button>
                 <span class="bg-white/20 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Plan Profesional</span>
                 <h3 class="text-2xl font-extrabold mt-2">Pasa a PresuYa PRO 🚀</h3>
                 <p class="text-xs text-amber-100 mt-1">Cierra más ventas proyectando una imagen 100% impecable.</p>
@@ -160,4 +162,78 @@
                             <span class="text-green-500 font-bold text-sm">✓</span>
                             <span><strong>Presupuestos ilimitados:</strong> Genera y envía todos los que necesites sin bloqueos.</span>
                         </li>
-                        <li class="flex items-center gap-
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500 font-bold text-sm">✓</span>
+                            <span><strong>Logotipo personalizado:</strong> Sube el logo de tu empresa en alta definición.</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500 font-bold text-sm">✓</span>
+                            <span><strong>PDFs limpios:</strong> Elimina para siempre la marca de agua "Generado gratis".</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500 font-bold text-sm">✓</span>
+                            <span><strong>Autoguardado:</strong> Tus datos de empresa guardados para no rellenar cada vez.</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500 font-bold text-sm">✓</span>
+                            <span><strong>Mejoras continuas:</strong> Acceso a todas las nuevas funciones y plantillas automáticas.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Selección de Planes -->
+                <div class="space-y-3 pt-2 border-t">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Elige tu plan:</h4>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- Opción Mensual -->
+                        <div id="card-mensual" onclick="seleccionarPlan('mensual')" class="border-2 border-amber-500 bg-amber-50/40 p-3 rounded-xl cursor-pointer transition relative">
+                            <div class="font-bold text-gray-800 text-sm">Mensual</div>
+                            <div class="text-xl font-extrabold text-amber-600 mt-1">9,99 € <span class="text-[10px] text-gray-500 font-normal">/mes</span></div>
+                            <p class="text-[10px] text-gray-500 mt-1">Sin compromiso. Cancela cuando quieras.</p>
+                        </div>
+
+                        <!-- Opción Anual (Destacada) -->
+                        <div id="card-anual" onclick="seleccionarPlan('anual')" class="border-2 border-gray-200 p-3 rounded-xl cursor-pointer transition relative hover:border-amber-400">
+                            <span class="absolute -top-2.5 right-2 bg-green-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow">Ahorra 20€</span>
+                            <div class="font-bold text-gray-800 text-sm">Anual</div>
+                            <div class="text-xl font-extrabold text-amber-600 mt-1">99 € <span class="text-[10px] text-gray-500 font-normal">/año</span></div>
+                            <p class="text-[10px] text-gray-500 mt-1">Equivale a 8,25 €/mes (2 meses gratis).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón de Pago -->
+                <a id="btn-stripe" href="https://buy.stripe.com/4gMfZh1oNfvpcFffyj2wU01" target="_blank" class="block w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 rounded-xl text-center text-sm shadow-lg transition transform active:scale-95">
+                    🚀 Obtener Plan PRO Ahora
+                </a>
+
+                <p class="text-[10px] text-center text-gray-400">Pago 100% seguro procesado por Stripe. Cancelación automática en cualquier momento.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const LINK_STRIPE_MENSUAL = "https://buy.stripe.com/4gMfZh1oNfvpcFffyj2wU01";
+        const LINK_STRIPE_ANUAL = "https://buy.stripe.com/4gMfZh1oNfvpcFffyj2wU01";
+
+        let planSeleccionado = 'mensual';
+        const MAX_GRATIS = 3;
+
+        document.getElementById('fecha').innerText = new Date().toLocaleDateString('es-ES');
+        actualizarContadorUI();
+
+        function obtenerUso() {
+            return parseInt(localStorage.getItem('presuya_uso') || '0');
+        }
+
+        function incrementarUso() {
+            const uso = obtenerUso() + 1;
+            localStorage.setItem('presuya_uso', uso.toString());
+            actualizarContadorUI();
+        }
+
+        function actualizarContadorUI() {
+            const restantes = Math.max(0, MAX_GRATIS - obtenerUso());
+            const badge = document.getElementById('badge-contador');
+            badge.innerText = `Presup
