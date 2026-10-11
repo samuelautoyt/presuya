@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PresuYa - Generador de Presupuestos Rápidos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 md:p-8 font-sans">
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8 bg-white p-6 rounded-xl shadow-sm">
+            <div>
+                <h1 class="text-2xl font-bold text-blue-600">⚡ PresuYa</h1>
+                <p class="text-sm text-gray-500">Crea y envía presupuestos en segundos</p>
+            </div>
+            <span class="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">Versión Gratis</span>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Formulario de datos -->
+            <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
+                <h2 class="text-lg font-semibold border-b pb-2 text-gray-800">1. Datos del Presupuesto</h2>
+                
+                <div>
+                    <label class="block text-xs font-medium text-gray-700">Tu Nombre / Empresa</label>
+                    <input type="text" id="emisor" placeholder="Ej. Reformas García" class="w-full mt-1 p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" oninput="actualizar()">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700">Nombre del Cliente</label>
+                    <input type="text" id="cliente" placeholder="Ej. Juan Pérez" class="w-full mt-1 p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" oninput="actualizar()">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700">Concepto / Servicio</label>
+                        <input type="text" id="concepto" placeholder="Ej. Pintar salón" class="w-full mt-1 p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" oninput="actualizar()">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700">Precio (€)</label>
+                        <input type="number" id="precio" placeholder="150" class="w-full mt-1 p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" oninput="actualizar()">
+                    </div>
+                </div>
+
+                <div class="pt-4 space-y-2">
+                    <button onclick="descargarPDF()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition">
+                        📄 Descargar PDF
+                    </button>
+                    <button onclick="enviarWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 rounded-lg text-sm transition">
+                        💬 Enviar por WhatsApp
+                    </button>
+                </div>
+            </div>
+
+            <!-- Vista Previa del Documento -->
+            <div class="bg-gray-50 p-6 rounded-xl border border-dashed border-gray-300">
+                <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Vista Previa</h2>
+                
+                <div id="documento" class="bg-white p-8 rounded-lg shadow-md min-h-[400px] flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <h3 id="prev-emisor" class="font-bold text-xl text-gray-800">Tu Empresa</h3>
+                                <p class="text-xs text-gray-500">PRESUPUESTO</p>
+                            </div>
+                            <span class="text-xs text-gray-400" id="fecha"></span>
+                        </div>
+
+                        <div class="mb-6 p-3 bg-gray-50 rounded">
+                            <p class="text-xs text-gray-500">Cliente:</p>
+                            <p id="prev-cliente" class="font-medium text-gray-700">Nombre del cliente</p>
+                        </div>
+
+                        <table class="w-full text-left text-sm mb-6">
+                            <thead>
+                                <tr class="border-b text-gray-400 text-xs">
+                                    <th class="pb-2">Descripción</th>
+                                    <th class="pb-2 text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b">
+                                    <td id="prev-concepto" class="py-3 text-gray-700">Servicio o Producto</td>
+                                    <td id="prev-precio" class="py-3 text-right font-medium text-gray-800">0.00 €</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="border-t pt-4 flex justify-between items-center">
+                        <span class="font-bold text-gray-800">TOTAL:</span>
+                        <span id="prev-total" class="font-bold text-xl text-blue-600">0.00 €</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('fecha').innerText = new Date().toLocaleDateString('es-ES');
+
+        function actualizar() {
+            const emisor = document.getElementById('emisor').value || 'Tu Empresa';
+            const cliente = document.getElementById('cliente').value || 'Nombre del cliente';
+            const concepto = document.getElementById('concepto').value || 'Servicio o Producto';
+            const precio = parseFloat(document.getElementById('precio').value || 0).toFixed(2);
+
+            document.getElementById('prev-emisor').innerText = emisor;
+            document.getElementById('prev-cliente').innerText = cliente;
+            document.getElementById('prev-concepto').innerText = concepto;
+            document.getElementById('prev-precio').innerText = precio + ' €';
+            document.getElementById('prev-total').innerText = precio + ' €';
+        }
+
+        function descargarPDF() {
+            const elemento = document.getElementById('documento');
+            html2pdf().from(elemento).save('presupuesto.pdf');
+        }
+
+        function enviarWhatsApp() {
+            const cliente = document.getElementById('cliente').value || 'cliente';
+            const total = document.getElementById('precio').value || '0';
+            const mensaje = encodeURIComponent(`Hola ${cliente}, te adjunto la información de tu presupuesto por un total de ${total}€. Quedo a tu disposición.`);
+            window.open(`https://wa.me/?text=${mensaje}`, '_blank');
+        }
+    </script>
+</body>
+</html>
