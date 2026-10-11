@@ -9,6 +9,29 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         #modal-pro.activo { display: flex !important; }
+        
+        /* Estilo de Marca de Agua Diagonal Fija */
+        .watermark-diagonal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: rgba(100, 116, 139, 0.18);
+            white-space: nowrap;
+            pointer-events: none;
+            user-select: none;
+            z-index: 1;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Bloqueo de vista previa al llegar a 0 */
+        .preview-bloqueada {
+            filter: blur(5px);
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen p-4 md:p-8 font-sans">
@@ -89,11 +112,17 @@
             </div>
 
             <!-- Vista Previa del Documento -->
-            <div class="bg-gray-50 p-6 rounded-xl border border-dashed border-gray-300">
+            <div class="bg-gray-50 p-6 rounded-xl border border-dashed border-gray-300 relative overflow-hidden">
                 <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Vista Previa en Tiempo Real</h2>
                 
-                <div id="documento" class="bg-white p-8 rounded-lg shadow-md min-h-[480px] flex flex-col justify-between">
-                    <div>
+                <div id="documento" class="bg-white p-8 rounded-lg shadow-md min-h-[480px] flex flex-col justify-between relative">
+                    
+                    <!-- MARCA DE AGUA DIAGONAL (Imborrable) -->
+                    <div id="marca-agua-diagonal" class="watermark-diagonal">
+                        Generado gratis con PresuYa
+                    </div>
+
+                    <div id="contenido-doc" class="relative z-10">
                         <div class="flex justify-between items-start mb-6 border-b pb-4">
                             <div>
                                 <img id="prev-logo" class="h-12 mb-2 hidden object-contain" alt="Logo">
@@ -124,7 +153,7 @@
                         </table>
                     </div>
 
-                    <div class="border-t pt-4 space-y-1">
+                    <div class="border-t pt-4 space-y-1 relative z-10">
                         <div class="flex justify-between text-xs text-gray-500">
                             <span>Subtotal:</span>
                             <span id="prev-subtotal">0.00 €</span>
@@ -137,14 +166,17 @@
                             <span class="font-bold text-gray-800">TOTAL:</span>
                             <span id="prev-total" class="font-bold text-xl text-blue-600">0.00 €</span>
                         </div>
-                        
-                        <!-- Marca de Agua más Grande e Impactante para Versión Gratis -->
-                        <div id="marca-agua" class="text-center pt-6 pb-2 border-t mt-4">
-                            <span class="inline-block bg-gray-100 border border-gray-200 text-gray-500 font-semibold text-xs px-3 py-1.5 rounded-md tracking-wide shadow-sm">
-                                Generado gratis con PresuYa
-                            </span>
-                        </div>
                     </div>
+                </div>
+
+                <!-- Capa de Bloqueo al agotar Intentos -->
+                <div id="overlay-bloqueo" class="absolute inset-0 bg-white/80 backdrop-blur-sm hidden flex-col items-center justify-center p-6 text-center z-20">
+                    <div class="bg-amber-100 p-3 rounded-full text-amber-600 mb-3 text-2xl">🔒</div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-1">Límite Gratuito Alcanzado</h3>
+                    <p class="text-xs text-gray-500 mb-4 max-w-xs">Has utilizado tus 3 presupuestos de prueba. Pasa al Plan PRO para desbloquear la herramienta.</p>
+                    <button type="button" onclick="mostrarModalPro()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg transition">
+                        🚀 Activar PresuYa PRO
+                    </button>
                 </div>
             </div>
         </div>
@@ -165,10 +197,10 @@
                     <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Todo lo que obtienes con PRO:</h4>
                     <ul class="space-y-2.5 text-xs text-gray-700">
                         <li class="flex items-center gap-2"><span class="text-green-500 font-bold text-sm">✓</span><span><strong>Presupuestos ilimitados:</strong> Envía todos los que necesites.</span></li>
-                        <li class="flex items-center gap-2"><span class="text-green-500 font-bold text-sm">✓</span><span><strong>Conceptos/Servicios ilimitados:</strong> Añade todos los servicios que quieras (limitado a 1 en la versión gratis).</span></li>
+                        <li class="flex items-center gap-2"><span class="text-green-500 font-bold text-sm">✓</span><span><strong>Conceptos/Servicios ilimitados:</strong> Añade todos los servicios que quieras (1 en versión gratis).</span></li>
                         <li class="flex items-center gap-2"><span class="text-green-500 font-bold text-sm">✓</span><span><strong>Logotipo personalizado:</strong> Sube el logo de tu empresa.</span></li>
-                        <li class="flex items-center gap-2"><span class="text-green-500 font-bold text-sm">✓</span><span><strong>PDFs 100% profesional:</strong> Elimina totalmente la marca de agua (Generado gratis con PresuYa).</span></li>
-                        <li class="flex items-center gap-2"><span class="text-green-500 font-bold text-sm">✓</span><span><strong>Autoguardado:</strong> Tus datos de empresa guardados en el navegador para no rellenar cada vez.</span></li>
+                        <li class="flex items-center gap-2"><span class="text-green-500 font-bold text-sm">✓</span><span><strong>PDFs 100% limpios:</strong> Elimina totalmente la marca de agua cruzada.</span></li>
+                        <li class="flex items-center gap-2"><span class="text-green-500 font-bold text-sm">✓</span><span><strong>Autoguardado:</strong> Tus datos de empresa guardados para no rellenar cada vez.</span></li>
                     </ul>
                 </div>
 
@@ -205,7 +237,6 @@
         actualizarUIEstado();
 
         function obtenerTipoPlan() {
-            // Retorna: null (gratis), 'mensual', o 'anual'
             return localStorage.getItem('presuya_plan');
         }
 
@@ -217,11 +248,9 @@
         function gestionarBotonHeader() {
             const plan = obtenerTipoPlan();
             if (plan === 'mensual') {
-                // Si tiene plan mensual, abre modal para cambiar al plan anual
                 seleccionarPlan('anual');
                 mostrarModalPro();
             } else if (plan === 'anual') {
-                // Ya tiene el máximo nivel PRO
                 return;
             } else {
                 mostrarModalPro();
@@ -230,20 +259,24 @@
 
         function actualizarUIEstado() {
             const badge = document.getElementById('badge-contador');
-            const watermark = document.getElementById('marca-agua');
+            const watermarkDiag = document.getElementById('marca-agua-diagonal');
             const logoTag = document.getElementById('label-logo-tag');
             const tagProHeader = document.getElementById('tag-pro-header');
             const btnHeader = document.getElementById('btn-header-pro');
+            const overlayBloqueo = document.getElementById('overlay-bloqueo');
 
             const plan = obtenerTipoPlan();
+            const uso = parseInt(localStorage.getItem('presuya_uso') || '0');
 
             if (esPro()) {
-                // Cabecera PRO
                 tagProHeader.classList.remove('hidden');
                 badge.innerText = "Presupuestos restantes: Ilimitados";
                 badge.className = "text-xs bg-amber-50 text-amber-700 font-semibold px-3 py-1 rounded-full border border-amber-200";
                 
-                watermark.style.display = 'none';
+                watermarkDiag.style.display = 'none';
+                overlayBloqueo.classList.add('hidden');
+                overlayBloqueo.classList.remove('flex');
+
                 logoTag.innerText = "ACTIVO";
                 logoTag.className = "text-[10px] text-green-600 font-bold uppercase tracking-wider";
 
@@ -255,22 +288,26 @@
                     btnHeader.className = "bg-green-600 text-white font-semibold text-xs px-4 py-2 rounded-full shadow cursor-default";
                 }
             } else {
-                // Versión Gratis
                 tagProHeader.classList.add('hidden');
-                const restantes = Math.max(0, MAX_GRATIS - parseInt(localStorage.getItem('presuya_uso') || '0'));
+                const restantes = Math.max(0, MAX_GRATIS - uso);
                 badge.innerText = `Presupuestos restantes: ${restantes}`;
-                if (restantes === 0) {
-                    badge.className = "text-xs bg-red-50 text-red-700 font-semibold px-3 py-1 rounded-full border border-red-200";
-                } else {
-                    badge.className = "text-xs bg-blue-50 text-blue-700 font-semibold px-3 py-1 rounded-full border border-blue-200";
-                }
-
-                watermark.style.display = 'block';
+                
+                watermarkDiag.style.display = 'block';
                 logoTag.innerText = "PLAN PRO";
                 logoTag.className = "text-[10px] text-amber-600 font-bold uppercase tracking-wider";
 
                 btnHeader.innerText = "⭐ Pasar a PRO";
                 btnHeader.className = "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold text-xs px-4 py-2 rounded-full shadow transition cursor-pointer";
+
+                if (restantes === 0) {
+                    badge.className = "text-xs bg-red-50 text-red-700 font-semibold px-3 py-1 rounded-full border border-red-200";
+                    overlayBloqueo.classList.remove('hidden');
+                    overlayBloqueo.classList.add('flex');
+                } else {
+                    badge.className = "text-xs bg-blue-50 text-blue-700 font-semibold px-3 py-1 rounded-full border border-blue-200";
+                    overlayBloqueo.classList.add('hidden');
+                    overlayBloqueo.classList.remove('flex');
+                }
             }
         }
 
