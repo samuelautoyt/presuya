@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PresuYa - Generador de Presupuestos Rápidos</title>
+    <title>PresuYa - Generador de Presupuestos Profesionales</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body class="bg-gray-100 min-h-screen p-4 md:p-8 font-sans">
-    <div class="max-w-5xl mx-auto">
+    <div class="max-w-6xl mx-auto">
         <!-- Header -->
         <header class="flex justify-between items-center mb-8 bg-white p-6 rounded-xl shadow-sm">
             <div>
                 <h1 class="text-2xl font-bold text-blue-600">⚡ PresuYa</h1>
-                <p class="text-sm text-gray-500">Crea y envía presupuestos en segundos</p>
+                <p class="text-sm text-gray-500">Crea y envía presupuestos profesionales en segundos</p>
             </div>
-            <span class="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">Versión Gratis</span>
+            <button onclick="mostrarModalPro()" class="bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs px-4 py-2 rounded-full shadow-sm transition flex items-center gap-1">
+                ⭐ Pasar a PRO
+            </button>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -23,32 +25,50 @@
             <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
                 <h2 class="text-lg font-semibold border-b pb-2 text-gray-800">1. Datos del Presupuesto</h2>
                 
-                <div>
-                    <label class="block text-xs font-medium text-gray-700">Tu Nombre / Empresa</label>
-                    <input type="text" id="emisor" placeholder="Ej. Reformas García" class="w-full mt-1 p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" oninput="actualizar()">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700">Tu Empresa / Nombre</label>
+                        <input type="text" id="emisor" placeholder="Ej. Reformas García" class="w-full mt-1 p-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500" oninput="actualizar()">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700">Logo de tu empresa</label>
+                        <input type="file" id="logo-input" accept="image/*" class="w-full mt-1 text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" onchange="cargarLogo(event)">
+                    </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-medium text-gray-700">Nombre del Cliente</label>
-                    <input type="text" id="cliente" placeholder="Ej. Juan Pérez" class="w-full mt-1 p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" oninput="actualizar()">
+                    <input type="text" id="cliente" placeholder="Ej. Juan Pérez" class="w-full mt-1 p-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500" oninput="actualizar()">
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700">Concepto / Servicio</label>
-                        <input type="text" id="concepto" placeholder="Ej. Pintar salón" class="w-full mt-1 p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" oninput="actualizar()">
+                <!-- Lista de Ítems -->
+                <div class="border-t pt-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-xs font-semibold text-gray-700">Conceptos / Servicios</label>
+                        <button onclick="agregarLinea()" class="text-xs text-blue-600 hover:underline font-medium">+ Añadir otra línea</button>
                     </div>
+                    
+                    <div id="lineas-container" class="space-y-2">
+                        <div class="grid grid-cols-12 gap-2 linea-item">
+                            <input type="text" placeholder="Descripción del trabajo/material" class="col-span-8 p-2 border rounded-lg text-sm desc-item" oninput="actualizar()">
+                            <input type="number" placeholder="Precio" class="col-span-4 p-2 border rounded-lg text-sm precio-item" oninput="actualizar()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración de Impuestos -->
+                <div class="border-t pt-4 grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-medium text-gray-700">Precio (€)</label>
-                        <input type="number" id="precio" placeholder="150" class="w-full mt-1 p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" oninput="actualizar()">
+                        <label class="block text-xs font-medium text-gray-700">Aplicar IVA (%)</label>
+                        <input type="number" id="iva-rate" value="21" class="w-full mt-1 p-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500" oninput="actualizar()">
                     </div>
                 </div>
 
                 <div class="pt-4 space-y-2">
-                    <button onclick="descargarPDF()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition">
+                    <button onclick="descargarPDF()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow">
                         📄 Descargar PDF
                     </button>
-                    <button onclick="enviarWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 rounded-lg text-sm transition">
+                    <button onclick="enviarWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow">
                         💬 Enviar por WhatsApp
                     </button>
                 </div>
@@ -56,62 +76,138 @@
 
             <!-- Vista Previa del Documento -->
             <div class="bg-gray-50 p-6 rounded-xl border border-dashed border-gray-300">
-                <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Vista Previa</h2>
+                <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Vista Previa en Tiempo Real</h2>
                 
-                <div id="documento" class="bg-white p-8 rounded-lg shadow-md min-h-[400px] flex flex-col justify-between">
+                <div id="documento" class="bg-white p-8 rounded-lg shadow-md min-h-[480px] flex flex-col justify-between">
                     <div>
-                        <div class="flex justify-between items-start mb-6">
+                        <div class="flex justify-between items-start mb-6 border-b pb-4">
                             <div>
+                                <img id="prev-logo" class="h-12 mb-2 hidden object-contain" alt="Logo">
                                 <h3 id="prev-emisor" class="font-bold text-xl text-gray-800">Tu Empresa</h3>
-                                <p class="text-xs text-gray-500">PRESUPUESTO</p>
+                                <p class="text-xs text-gray-500">PRESUPUESTO DE SERVICIOS</p>
                             </div>
                             <span class="text-xs text-gray-400" id="fecha"></span>
                         </div>
 
-                        <div class="mb-6 p-3 bg-gray-50 rounded">
-                            <p class="text-xs text-gray-500">Cliente:</p>
-                            <p id="prev-cliente" class="font-medium text-gray-700">Nombre del cliente</p>
+                        <div class="mb-6 p-3 bg-gray-50 rounded-lg">
+                            <p class="text-xs text-gray-400 uppercase font-semibold">Cliente</p>
+                            <p id="prev-cliente" class="font-medium text-gray-800 text-sm">Nombre del cliente</p>
                         </div>
 
                         <table class="w-full text-left text-sm mb-6">
                             <thead>
                                 <tr class="border-b text-gray-400 text-xs">
                                     <th class="pb-2">Descripción</th>
-                                    <th class="pb-2 text-right">Total</th>
+                                    <th class="pb-2 text-right">Importe</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="prev-tabla-body">
                                 <tr class="border-b">
-                                    <td id="prev-concepto" class="py-3 text-gray-700">Servicio o Producto</td>
-                                    <td id="prev-precio" class="py-3 text-right font-medium text-gray-800">0.00 €</td>
+                                    <td class="py-2 text-gray-700">Servicio o Producto</td>
+                                    <td class="py-2 text-right font-medium text-gray-800">0.00 €</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <div class="border-t pt-4 flex justify-between items-center">
-                        <span class="font-bold text-gray-800">TOTAL:</span>
-                        <span id="prev-total" class="font-bold text-xl text-blue-600">0.00 €</span>
+                    <div class="border-t pt-4 space-y-1">
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span>Subtotal:</span>
+                            <span id="prev-subtotal">0.00 €</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span id="label-iva">IVA (21%):</span>
+                            <span id="prev-iva">0.00 €</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t">
+                            <span class="font-bold text-gray-800">TOTAL:</span>
+                            <span id="prev-total" class="font-bold text-xl text-blue-600">0.00 €</span>
+                        </div>
+                        <div class="text-center pt-4 text-[10px] text-gray-400">
+                            Generado gratis con PresuYa.com
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal PRO (Prototipo de pago) -->
+    <div id="modal-pro" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl text-center space-y-4">
+            <span class="text-3xl">🚀</span>
+            <h3 class="text-xl font-bold text-gray-800">Pasa a PresuYa PRO</h3>
+            <p class="text-sm text-gray-600">Elimina la marca de agua, guarda tus plantillas y envía presupuestos ilimitados por solo **9$/mes**.</p>
+            <button onclick="alert('Aquí conectaremos el enlace de pago de Lemon Squeezy en el siguiente paso.')" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg text-sm shadow transition">
+                Obtener Plan PRO
+            </button>
+            <button onclick="cerrarModalPro()" class="text-xs text-gray-400 hover:underline">Continuar con la versión gratuita</button>
+        </div>
+    </div>
+
     <script>
         document.getElementById('fecha').innerText = new Date().toLocaleDateString('es-ES');
+
+        function cargarLogo(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const logoImg = document.getElementById('prev-logo');
+                logoImg.src = reader.result;
+                logoImg.classList.remove('hidden');
+            }
+            if(event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
+
+        function agregarLinea() {
+            const container = document.getElementById('lineas-container');
+            const nuevaLinea = document.createElement('div');
+            nuevaLinea.className = 'grid grid-cols-12 gap-2 linea-item';
+            nuevaLinea.innerHTML = `
+                <input type="text" placeholder="Descripción del trabajo/material" class="col-span-8 p-2 border rounded-lg text-sm desc-item" oninput="actualizar()">
+                <input type="number" placeholder="Precio" class="col-span-4 p-2 border rounded-lg text-sm precio-item" oninput="actualizar()">
+            `;
+            container.appendChild(nuevaLinea);
+        }
 
         function actualizar() {
             const emisor = document.getElementById('emisor').value || 'Tu Empresa';
             const cliente = document.getElementById('cliente').value || 'Nombre del cliente';
-            const concepto = document.getElementById('concepto').value || 'Servicio o Producto';
-            const precio = parseFloat(document.getElementById('precio').value || 0).toFixed(2);
+            const ivaRate = parseFloat(document.getElementById('iva-rate').value || 0);
 
             document.getElementById('prev-emisor').innerText = emisor;
             document.getElementById('prev-cliente').innerText = cliente;
-            document.getElementById('prev-concepto').innerText = concepto;
-            document.getElementById('prev-precio').innerText = precio + ' €';
-            document.getElementById('prev-total').innerText = precio + ' €';
+
+            // Recorrer líneas
+            const descs = document.querySelectorAll('.desc-item');
+            const precios = document.querySelectorAll('.precio-item');
+            const tablaBody = document.getElementById('prev-tabla-body');
+            tablaBody.innerHTML = '';
+
+            let subtotal = 0;
+
+            descs.forEach((descInput, index) => {
+                const desc = descInput.value || 'Servicio o Producto';
+                const precio = parseFloat(precios[index].value || 0);
+                subtotal += precio;
+
+                const tr = document.createElement('tr');
+                tr.className = 'border-b';
+                tr.innerHTML = `
+                    <td class="py-2 text-gray-700">${desc}</td>
+                    <td class="py-2 text-right font-medium text-gray-800">${precio.toFixed(2)} €</td>
+                `;
+                tablaBody.appendChild(tr);
+            });
+
+            const iva = subtotal * (ivaRate / 100);
+            const total = subtotal + iva;
+
+            document.getElementById('prev-subtotal').innerText = subtotal.toFixed(2) + ' €';
+            document.getElementById('label-iva').innerText = `IVA (${ivaRate}%):`;
+            document.getElementById('prev-iva').innerText = iva.toFixed(2) + ' €';
+            document.getElementById('prev-total').innerText = total.toFixed(2) + ' €';
         }
 
         function descargarPDF() {
@@ -121,9 +217,19 @@
 
         function enviarWhatsApp() {
             const cliente = document.getElementById('cliente').value || 'cliente';
-            const total = document.getElementById('precio').value || '0';
-            const mensaje = encodeURIComponent(`Hola ${cliente}, te adjunto la información de tu presupuesto por un total de ${total}€. Quedo a tu disposición.`);
+            const total = document.getElementById('prev-total').innerText;
+            const mensaje = encodeURIComponent(`Hola ${cliente}, te adjunto la información de tu presupuesto por un total de ${total}. Quedo a tu disposición.`);
             window.open(`https://wa.me/?text=${mensaje}`, '_blank');
+        }
+
+        function mostrarModalPro() {
+            document.getElementById('modal-pro').classList.remove('hidden');
+            document.getElementById('modal-pro').classList.add('flex');
+        }
+
+        function cerrarModalPro() {
+            document.getElementById('modal-pro').classList.add('hidden');
+            document.getElementById('modal-pro').classList.remove('flex');
         }
     </script>
 </body>
