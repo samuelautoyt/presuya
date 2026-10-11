@@ -10,7 +10,7 @@
     <style>
         #modal-pro.activo { display: flex !important; }
         
-        /* Estilo de Marca de Agua Diagonal Fija y Centrada */
+        /* Estilo de Marca de Agua Diagonal Fija y Centrada sin Bloquear Clics */
         .watermark-diagonal {
             position: absolute;
             top: 50%;
@@ -20,19 +20,13 @@
             font-weight: 900;
             color: rgba(100, 116, 139, 0.22);
             white-space: nowrap;
-            pointer-events: none;
+            pointer-events: none !important;
             user-select: none;
-            z-index: 15;
+            z-index: 5;
             text-transform: uppercase;
             letter-spacing: 1px;
             width: 100%;
-            text-center: center;
-        }
-
-        /* Bloqueo de vista previa al llegar a 0 */
-        .preview-bloqueada {
-            filter: blur(5px);
-            pointer-events: none;
+            text-align: center;
         }
     </style>
 </head>
@@ -84,7 +78,7 @@
                 <div class="border-t pt-4">
                     <div class="flex justify-between items-center mb-2">
                         <label class="block text-xs font-semibold text-gray-700">Conceptos / Servicios</label>
-                        <button type="button" onclick="intentarAgregarLinea()" class="text-xs text-blue-600 hover:underline font-medium">+ Añadir otra línea</button>
+                        <button type="button" onclick="intentarAgregarLinea()" class="text-xs text-blue-600 hover:underline font-medium cursor-pointer">+ Añadir otra línea</button>
                     </div>
                     
                     <div id="lineas-container" class="space-y-2">
@@ -104,10 +98,10 @@
                 </div>
 
                 <div class="pt-4 space-y-2">
-                    <button type="button" onclick="procesarAccion('pdf')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow flex justify-center items-center gap-2">
+                    <button type="button" onclick="procesarAccion('pdf')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow flex justify-center items-center gap-2 cursor-pointer">
                         📄 Descargar PDF
                     </button>
-                    <button type="button" onclick="procesarAccion('whatsapp')" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow flex justify-center items-center gap-2">
+                    <button type="button" onclick="procesarAccion('whatsapp')" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow flex justify-center items-center gap-2 cursor-pointer">
                         💬 Enviar por WhatsApp
                     </button>
                 </div>
@@ -119,7 +113,7 @@
                 
                 <div id="documento" class="bg-white p-8 rounded-lg shadow-md min-h-[480px] flex flex-col justify-between relative">
                     
-                    <!-- MARCA DE AGUA DIAGONAL (Imborrable) -->
+                    <!-- MARCA DE AGUA DIAGONAL (Sin interferir con eventos) -->
                     <div id="marca-agua-diagonal" class="watermark-diagonal">
                         Generado gratis con PresuYa
                     </div>
@@ -134,7 +128,7 @@
                             <span class="text-xs text-gray-400" id="fecha"></span>
                         </div>
 
-                        <!-- Caja de Cliente con Fondo Transparente para no Tapar la Marca -->
+                        <!-- Caja de Cliente Transparente -->
                         <div class="mb-6 p-3 bg-transparent border border-gray-200 rounded-lg">
                             <p class="text-xs text-gray-400 uppercase font-semibold">Cliente</p>
                             <p id="prev-cliente" class="font-medium text-gray-800 text-sm">Nombre del cliente</p>
@@ -177,7 +171,7 @@
                     <div class="bg-amber-100 p-3 rounded-full text-amber-600 mb-3 text-2xl">🔒</div>
                     <h3 class="text-lg font-bold text-gray-800 mb-1">Límite Gratuito Alcanzado</h3>
                     <p class="text-xs text-gray-500 mb-4 max-w-xs">Has utilizado tus 3 presupuestos de prueba. Pasa al Plan PRO para desbloquear la herramienta.</p>
-                    <button type="button" onclick="mostrarModalPro()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg transition">
+                    <button type="button" onclick="mostrarModalPro()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg transition cursor-pointer">
                         🚀 Activar PresuYa PRO
                     </button>
                 </div>
@@ -215,7 +209,7 @@
                             <div class="text-xl font-extrabold text-amber-600 mt-1">9,99 € <span class="text-[10px] text-gray-500 font-normal">/mes</span></div>
                         </div>
                         <div id="card-anual" onclick="seleccionarPlan('anual')" class="border-2 border-gray-200 p-3 rounded-xl cursor-pointer transition relative hover:border-amber-400">
-                            <span class="absolute -top-2.5 right-2 bg-green-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow">Casi 20€ de ahorro</span>
+                            <span class="absolute -top-2.5 right-2 bg-green-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow">Ahorra 20€</span>
                             <div class="font-bold text-gray-800 text-sm">Anual</div>
                             <div class="text-xl font-extrabold text-amber-600 mt-1">99 € <span class="text-[10px] text-gray-500 font-normal">/año</span></div>
                         </div>
@@ -428,3 +422,18 @@
             const total = subtotal + iva;
 
             document.getElementById('prev-subtotal').innerText = subtotal.toFixed(2) + ' €';
+            document.getElementById('label-iva').innerText = `IVA (${ivaRate}%):`;
+            document.getElementById('prev-iva').innerText = iva.toFixed(2) + ' €';
+            document.getElementById('prev-total').innerText = total.toFixed(2) + ' €';
+        }
+
+        function mostrarModalPro() {
+            document.getElementById('modal-pro').classList.add('activo');
+        }
+
+        function cerrarModalPro() {
+            document.getElementById('modal-pro').classList.remove('activo');
+        }
+    </script>
+</body>
+</html>
