@@ -10,21 +10,23 @@
     <style>
         #modal-pro.activo { display: flex !important; }
         
-        /* Estilo de Marca de Agua Diagonal Fija */
+        /* Estilo de Marca de Agua Diagonal Fija y Centrada */
         .watermark-diagonal {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) rotate(-30deg);
-            font-size: 2.2rem;
+            transform: translate(-50%, -50%) rotate(-28deg);
+            font-size: 1.85rem;
             font-weight: 900;
-            color: rgba(100, 116, 139, 0.18);
+            color: rgba(100, 116, 139, 0.22);
             white-space: nowrap;
             pointer-events: none;
             user-select: none;
-            z-index: 1;
+            z-index: 15;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
+            width: 100%;
+            text-center: center;
         }
 
         /* Bloqueo de vista previa al llegar a 0 */
@@ -132,12 +134,13 @@
                             <span class="text-xs text-gray-400" id="fecha"></span>
                         </div>
 
-                        <div class="mb-6 p-3 bg-gray-50 rounded-lg">
+                        <!-- Caja de Cliente con Fondo Transparente para no Tapar la Marca -->
+                        <div class="mb-6 p-3 bg-transparent border border-gray-200 rounded-lg">
                             <p class="text-xs text-gray-400 uppercase font-semibold">Cliente</p>
                             <p id="prev-cliente" class="font-medium text-gray-800 text-sm">Nombre del cliente</p>
                         </div>
 
-                        <table class="w-full text-left text-sm mb-6">
+                        <table class="w-full text-left text-sm mb-6 bg-transparent">
                             <thead>
                                 <tr class="border-b text-gray-400 text-xs">
                                     <th class="pb-2">Descripción</th>
@@ -153,7 +156,7 @@
                         </table>
                     </div>
 
-                    <div class="border-t pt-4 space-y-1 relative z-10">
+                    <div class="border-t pt-4 space-y-1 relative z-10 bg-transparent">
                         <div class="flex justify-between text-xs text-gray-500">
                             <span>Subtotal:</span>
                             <span id="prev-subtotal">0.00 €</span>
@@ -199,7 +202,7 @@
                         <li class="flex items-center gap-2"><span class="text-green-500 font-bold text-sm">✓</span><span><strong>Presupuestos ilimitados:</strong> Envía todos los que necesites.</span></li>
                         <li class="flex items-center gap-2"><span class="text-green-500 font-bold text-sm">✓</span><span><strong>Conceptos/Servicios ilimitados:</strong> Añade todos los servicios que quieras (1 en versión gratis).</span></li>
                         <li class="flex items-center gap-2"><span class="text-green-500 font-bold text-sm">✓</span><span><strong>Logotipo personalizado:</strong> Sube el logo de tu empresa.</span></li>
-                        <li class="flex items-center gap-2"><span class="text-green-500 font-bold text-sm">✓</span><span><strong>PDFs 100% limpios:</strong> Elimina totalmente la marca de agua cruzada.</span></li>
+                        <li class="flex items-center gap-2"><span class="text-green-500 font-bold text-sm">✓</span><span><strong>PDFs 100% profesional:</strong> Elimina totalmente la marca de agua cruzada.</span></li>
                         <li class="flex items-center gap-2"><span class="text-green-500 font-bold text-sm">✓</span><span><strong>Autoguardado:</strong> Tus datos de empresa guardados para no rellenar cada vez.</span></li>
                     </ul>
                 </div>
@@ -212,7 +215,7 @@
                             <div class="text-xl font-extrabold text-amber-600 mt-1">9,99 € <span class="text-[10px] text-gray-500 font-normal">/mes</span></div>
                         </div>
                         <div id="card-anual" onclick="seleccionarPlan('anual')" class="border-2 border-gray-200 p-3 rounded-xl cursor-pointer transition relative hover:border-amber-400">
-                            <span class="absolute -top-2.5 right-2 bg-green-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow">Ahorra 20€</span>
+                            <span class="absolute -top-2.5 right-2 bg-green-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow">Casi 20€ de ahorro</span>
                             <div class="font-bold text-gray-800 text-sm">Anual</div>
                             <div class="text-xl font-extrabold text-amber-600 mt-1">99 € <span class="text-[10px] text-gray-500 font-normal">/año</span></div>
                         </div>
@@ -425,18 +428,3 @@
             const total = subtotal + iva;
 
             document.getElementById('prev-subtotal').innerText = subtotal.toFixed(2) + ' €';
-            document.getElementById('label-iva').innerText = `IVA (${ivaRate}%):`;
-            document.getElementById('prev-iva').innerText = iva.toFixed(2) + ' €';
-            document.getElementById('prev-total').innerText = total.toFixed(2) + ' €';
-        }
-
-        function mostrarModalPro() {
-            document.getElementById('modal-pro').classList.add('activo');
-        }
-
-        function cerrarModalPro() {
-            document.getElementById('modal-pro').classList.remove('activo');
-        }
-    </script>
-</body>
-</html>
